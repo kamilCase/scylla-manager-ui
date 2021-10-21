@@ -1,27 +1,27 @@
+import ClusterSelectorDropdown from "components/ClusterSelectorDropdown";
+
 function Navbar({}) {
   return (
-    <nav className="bg-gray-800 pt-2 md:pt-1 pb-1 px-1 mt-0 h-auto fixed w-full z-20 top-0">
-      <div className="flex flex-wrap items-center">
-        <div className="flex flex-shrink md:w-1/3 justify-center md:justify-start text-white">
-          <img src="logo-scylla.svg" style={{height: '50px'}}/>
+    <div className="flex flex-col w-full pl-0 md:p-4 md:space-y-4">
+      <header className="w-full shadow-lg bg-white dark:bg-gray-700 items-center h-16 rounded-2xl z-40">
+        <div className="relative z-20 flex flex-col justify-center h-full px-3 mx-auto flex-center">
+          <div className="relative items-center pl-1 flex w-full lg:max-w-68 sm:pr-2 sm:ml-0">
+            <div className="container relative left-0 z-50 flex w-3/4 h-auto h-full">
+              <div className="relative flex items-center w-full lg:w-64 h-full group" />
+            </div>
+            <div className="relative p-1 flex items-center justify-end w-1/4 ml-5 mr-4 sm:mr-0 sm:right-auto">
+              <ClusterSelectorDropdown
+                clustersList={[
+                  { id: 12345, name: "Cluster Blaster" },
+                  { id: 54321, name: "Test Cluster" },
+                ]}
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex flex-1 md:w-1/3 justify-center md:justify-start text-white px-2">
-                <span className="relative w-full">
-                </span>
-        </div>
-        <div className="flex w-full pt-2 content-center justify-between md:w-1/3 md:justify-end">
-          <ul className="list-reset flex justify-between flex-1 md:flex-none items-center">
-            <li className="flex-1 md:flex-none md:mr-3">
-              <a
-                className="inline-block text-gray-600 no-underline hover:text-gray-200 hover:text-underline py-2 px-4"
-                href="#">[USERNAME]</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-    </nav>
-  )
+      </header>
+    </div>
+  );
 }
 
-export default Navbar
+export default Navbar;
