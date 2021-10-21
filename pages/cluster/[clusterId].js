@@ -1,8 +1,11 @@
 import { useRouter } from "next/router";
 import Layout from "components/Layout";
 import { useCluster } from "utils/hooks";
-import { MdHttp, MdNoEncryption } from "react-icons/md";
-
+import { MdHttps, MdNoEncryption, MdMemory } from "react-icons/md";
+import { AiFillDatabase, AiFillApi, AiOutlineFieldTime } from "react-icons/ai";
+import { BsCpuFill } from "react-icons/bs";
+import StatusBox from "components/StatusBox";
+import { statusType } from "utils/utils";
 function ClusterDetailsPage() {
   const router = useRouter();
   const { clusterId } = router.query;
@@ -12,40 +15,120 @@ function ClusterDetailsPage() {
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
 
-  const dc = data?.dataCenters?.[0];
-  // const scyllaVersion = scylla_version;
+  //       "scylla_version": "4.3.0-0.20210110.000585522",
+  //       "agent_version": "2.5.1-0.20210824.a3da2707"
+
   return (
     <Layout>
       <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
-        {data.name}
+        <span className="font-bold">Cluster:</span> {data.name}
       </h1>
 
-      <div className="flex items-center my-4 text-blue-500 rounded justify-between">
-        <span className="rounded-lg p-2 bg-white">
-          {dc?.ssl ? <MdHttp /> : <MdNoEncryption />}
-        </span>
-        <div className="flex flex-col w-full ml-2 items-start justify-evenly">
-          <p className="text-red-600 text-lg">SSL</p>
-          <p className="text-red-400 text-sm">{dc?.ssl ? "ON" : "OFF"}</p>
-        </div>
-      </div>
-
-      <div className="bg-white  overflow-hidden shadow rounded-lg w-60 md:w-72 relative">
-        {dc?.ssl ? (
-          <MdHttp />
-        ) : (
-          <MdNoEncryption className="h-24 w-24 rounded-full absolute opacity-50 -right-2" />
-        )}
-
-        <div className="px-4 py-5 sm:p-6">
-          <p className="text-sm leading-5 font-medium text-gray-500 truncate">
-            SSL
-          </p>
-          <p className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-            OFF
-          </p>
-        </div>
-      </div>
+      {data?.dataCenters.map(
+        ({
+          ssl,
+          cql_status,
+          cql_rtt_ms,
+          rest_status,
+          rest_rtt_ms,
+          dc: name,
+          status,
+          host,
+          total_ram,
+          uptime,
+          cpu_count,
+          scylla_version,
+          agent_version,
+        }) => (
+          <>
+            <h2 className="text-xl font-normal leading-normal mt-0 mb-2 text-blue-300">
+              <span className="font-bold">Data Center:</span> {name}
+            </h2>
+            <div className="flex">
+              <h2 className="text-lg pr-4 font-normal leading-normal mt-0 mb-2 text-blue-300">
+                <span className="font-bold">Host:</span> {host}
+              </h2>
+              <h2 className="text-lg pr-4 font-normal leading-normal mt-0 mb-2 text-blue-300">
+                <span className="font-bold">Scylla Version:</span>{" "}
+                {scylla_version}
+              </h2>
+              <h2 className="text-lg pr-4 font-normal leading-normal mt-0 mb-2 text-blue-300">
+                <span className="font-bold">Agent Version:</span>{" "}
+                {agent_version}
+              </h2>
+            </div>
+            <div key={name} className="flex justify-evenly">
+              <StatusBox
+                title="Status"
+                description={status}
+                status={
+                  status === "UN" ? statusType.positive : statusType.negative
+                }
+              />
+              <StatusBox
+                icon={
+                  ssl ? (
+                    <MdHttps className="text-green-500" />
+                  ) : (
+                    <MdNoEncryption className="text-red-500" />
+                  )
+                }
+                title="SSL"
+                description={ssl ? "ON" : "OFF"}
+                status={ssl ? statusType.positive : statusType.negative}
+              />
+              <StatusBox
+                icon={
+                  cql_status ? (
+                    <AiFillDatabase className="text-green-500" />
+                  ) : (
+                    <AiFillDatabase className="text-red-500" />
+                  )
+                }
+                title="CQL"
+                description={cql_status ? "UP" : "DOWN"}
+                status={cql_status ? statusType.positive : statusType.negative}
+                value={cql_rtt_ms}
+                unit="ms"
+              />
+              <StatusBox
+                icon={
+                  rest_status ? (
+                    <AiFillApi className="text-green-500" />
+                  ) : (
+                    <AiFillApi className="text-red-500" />
+                  )
+                }
+                title="REST"
+                description={rest_status ? "UP" : "DOWN"}
+                status={rest_status ? statusType.positive : statusType.negative}
+                value={rest_rtt_ms}
+                unit="ms"
+              />
+            </div>
+            <div key={name} className="flex justify-evenly">
+              <StatusBox
+                title="Total RAM"
+                description={total_ram}
+                icon={<MdMemory />}
+                status={statusType.neutral}
+              />
+              <StatusBox
+                title="Uptime"
+                description={uptime}
+                icon={<AiOutlineFieldTime />}
+                status={statusType.neutral}
+              />
+              <StatusBox
+                title="CPU #"
+                description={cpu_count}
+                icon={<BsCpuFill />}
+                status={statusType.neutral}
+              />
+            </div>
+          </>
+        )
+      )}
     </Layout>
   );
 }
