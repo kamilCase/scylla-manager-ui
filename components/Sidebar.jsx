@@ -6,7 +6,7 @@ function Sidebar() {
       <div
         className="md:mt-12 md:w-48 md:fixed md:left-0 md:top-0 content-center md:content-start text-left justify-between">
         <ul className="list-reset flex flex-row md:flex-col py-0 md:py-3 px-1 md:px-2 text-center md:text-left">
-          <Link href="">
+          <Link href="/cluster/1">
             <li className="mr-3 flex-1">
               <a href="#"
                  className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-pink-500">
@@ -15,7 +15,7 @@ function Sidebar() {
               </a>
             </li>
           </Link>
-          <Link href="">
+          <Link href="/cluster/2">
             <li className="mr-3 flex-1">
               <a href="#"
                  className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-purple-500">
@@ -24,7 +24,7 @@ function Sidebar() {
               </a>
             </li>
           </Link>
-          <Link href="">
+          <Link href="/cluster/3">
             <li className="mr-3 flex-1">
               <a href="#"
                  className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-blue-600">

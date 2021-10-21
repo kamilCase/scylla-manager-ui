@@ -1,5 +1,13 @@
-function clusterDetailsPage({clusterId}) {
-  return null
+import Layout from "components/Layout";
+import {useRouter} from "next/router";
+
+function ClusterDetailsPage({}) {
+  const router = useRouter();
+  const {clusterId} = router.query;
+
+  return <Layout>
+    <button>{clusterId}</button>
+  </Layout>
 }
 
-export default clusterDetailsPage;
+export default ClusterDetailsPage;
