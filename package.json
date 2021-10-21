@@ -10,10 +10,15 @@
   },
   "dependencies": {
     "@emotion/css": "^11.5.0",
+    "@emotion/react": "^11.5.0",
+    "@emotion/styled": "^11.3.0",
+    "autoprefixer": "^10.3.7",
     "next": "11.1.2",
+    "postcss": "^8.3.10",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "tailwindcss": "^2.2.17",
+    "tailwindcss-filters": "^3.0.0",
     "xwind": "^0.8.0"
   },
   "devDependencies": {
