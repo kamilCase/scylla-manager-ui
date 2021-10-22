@@ -10,12 +10,7 @@ function Navbar({}) {
               <div className="relative flex items-center w-full lg:w-64 h-full group" />
             </div>
             <div className="relative p-1 flex items-center justify-end w-1/4 ml-5 mr-4 sm:mr-0 sm:right-auto">
-              <ClusterSelectorDropdown
-                clustersList={[
-                  { id: 12345, name: "Cluster Blaster" },
-                  { id: 54321, name: "Test Cluster" },
-                ]}
-              />
+              <ClusterSelectorDropdown />
             </div>
           </div>
         </div>
