@@ -11,6 +11,10 @@ function ClusterSelectorDropdown() {
   if (error) return <div>error while fetching data</div>;
   if (!data) return <div>loading...</div>;
 
+  if (!clusterId && data?.length > 0) {
+    router.push(`cluster/${data[0].id}/status`);
+  }
+
   const selectedClusterName = data.find((c) => c.id === clusterId)?.name;
 
   function toggleOpen() {
