@@ -20,23 +20,21 @@ function StatusBox({ title, icon, status, description, value, unit }) {
 
   return (
     <div className="bg-white overflow-hidden shadow rounded-lg w-24 md:w-32 relative m-2">
-      {/* <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span> */}
-
       {icon && (
         <IconContainer className="p-2 h-12 w-12 rounded-full absolute opacity-50 -right-2">
           {icon}
         </IconContainer>
       )}
       <div className="px-4 py-5 sm:p-2">
-        <p className="text-sm leading-5 font-medium text-gray-500 truncate">
+        <p className="text-sm leading-5 font-medium truncate">
           <span>
             {title.toUpperCase()}
             <span className="ml-2 h-3 w-3 inline-flex">
               <span
-                className={`animate-ping absolute inline-flex h-3 w-3 rounded-full bg-${statusColor} opacity-75`}
+                className={`bg-${statusColor} opacity-75 animate-ping absolute inline-flex h-3 w-3 rounded-full`}
               ></span>
               <span
-                className={`relative inline-flex rounded-full h-3 w-3 bg-${statusColor}`}
+                className={`bg-${statusColor} relative inline-flex rounded-full h-3 w-3`}
               ></span>
             </span>
           </span>
