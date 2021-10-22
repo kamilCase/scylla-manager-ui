@@ -8,4 +8,13 @@ module.exports = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/cluster/:clusterId',
+        destination: '/cluster/:clusterId/status',
+        permanent: true,
+      },
+    ]
+  },
 };
