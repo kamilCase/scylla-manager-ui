@@ -21,119 +21,124 @@ function ClusterStatusPage() {
       <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
         <span className="font-bold">Cluster:</span> {data.name}
       </h1>
-
-      {data?.nodes.map(
-        ({
-           ssl,
-           cql_status,
-           cql_rtt_ms,
-           rest_status,
-           rest_rtt_ms,
-           dc: name,
-           status,
-           host,
-           total_ram,
-           uptime,
-           cpu_count,
-           scylla_version,
-           agent_version,
-         }) => (
-          <div
-            key={host}
-            className="bg-gray-400 bg-opacity-30 shadow-md rounded-xl p-2 w-min"
-          >
-            <div className="flex justify-between">
-              <h2 className="text-base pr-4 font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
-                <span className="font-bold">Host:</span> {host}
-              </h2>
-              <h2 className="text-base pr-4 font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
-                <span className="font-bold">Agent Version:</span>{" "}
-                {agent_version}
-              </h2>
+      <div className="flex">
+        {data?.nodes.map(
+          ({
+            ssl,
+            cql_status,
+            cql_rtt_ms,
+            rest_status,
+            rest_rtt_ms,
+            dc: name,
+            status,
+            host,
+            total_ram,
+            uptime,
+            cpu_count,
+            scylla_version,
+            agent_version,
+          }) => (
+            <div
+              key={host}
+              className="bg-gray-400 bg-opacity-30 shadow-md rounded-xl p-2 m-2 w-min"
+            >
+              <div className="flex justify-between">
+                <h2 className="text-base pr-4 font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
+                  <span className="font-bold">Host:</span> {host}
+                </h2>
+                <h2 className="text-base pr-4 font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
+                  <span className="font-bold">Agent Version:</span>{" "}
+                  {agent_version}
+                </h2>
+              </div>
+              <div className="flex justify-between">
+                <h2 className="text-base font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
+                  <span className="font-bold">Data Center:</span> {name}
+                </h2>
+                <h2 className="text-base font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
+                  <span className="font-bold">Scylla Version:</span>{" "}
+                  {scylla_version}
+                </h2>
+              </div>
+              <div className="flex">
+                <StatusBox
+                  title="Status"
+                  description={status}
+                  status={
+                    status === "UN" ? statusType.positive : statusType.negative
+                  }
+                />
+                <StatusBox
+                  icon={
+                    ssl ? (
+                      <MdHttps className="text-green-500" />
+                    ) : (
+                      <MdNoEncryption className="text-red-500" />
+                    )
+                  }
+                  title="SSL"
+                  description={ssl ? "ON" : "OFF"}
+                  status={ssl ? statusType.positive : statusType.negative}
+                />
+                <StatusBox
+                  icon={
+                    cql_status ? (
+                      <AiFillDatabase className="text-green-500" />
+                    ) : (
+                      <AiFillDatabase className="text-red-500" />
+                    )
+                  }
+                  title="CQL"
+                  description={cql_status ? "UP" : "DOWN"}
+                  status={
+                    cql_status ? statusType.positive : statusType.negative
+                  }
+                  value={cql_rtt_ms}
+                  unit="ms"
+                />
+                <StatusBox
+                  icon={
+                    rest_status ? (
+                      <AiFillApi className="text-green-500" />
+                    ) : (
+                      <AiFillApi className="text-red-500" />
+                    )
+                  }
+                  title="REST"
+                  description={rest_status ? "UP" : "DOWN"}
+                  status={
+                    rest_status ? statusType.positive : statusType.negative
+                  }
+                  value={rest_rtt_ms}
+                  unit="ms"
+                />
+              </div>
+              <div className="flex ">
+                <StatusBox
+                  title="ram"
+                  description={`${(total_ram / (1000 * 1000 * 1000)).toFixed(
+                    2
+                  )} GB`}
+                  icon={<MdMemory />}
+                  status={statusType.neutral}
+                />
+                <StatusBox
+                  title="Uptime"
+                  description={uptime.toString()}
+                  icon={<AiOutlineFieldTime />}
+                  status={statusType.neutral}
+                />
+                <StatusBox
+                  title="CPU #"
+                  description={cpu_count.toString()}
+                  icon={<BsCpuFill />}
+                  status={statusType.neutral}
+                />
+              </div>
             </div>
-            <div className="flex justify-between">
-              <h2 className="text-base font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
-                <span className="font-bold">Data Center:</span> {name}
-              </h2>
-              <h2 className="text-base font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
-                <span className="font-bold">Scylla Version:</span>{" "}
-                {scylla_version}
-              </h2>
-            </div>
-            <div className="flex">
-              <StatusBox
-                title="Status"
-                description={status}
-                status={
-                  status === "UN" ? statusType.positive : statusType.negative
-                }
-              />
-              <StatusBox
-                icon={
-                  ssl ? (
-                    <MdHttps className="text-green-500" />
-                  ) : (
-                    <MdNoEncryption className="text-red-500" />
-                  )
-                }
-                title="SSL"
-                description={ssl ? "ON" : "OFF"}
-                status={ssl ? statusType.positive : statusType.negative}
-              />
-              <StatusBox
-                icon={
-                  cql_status ? (
-                    <AiFillDatabase className="text-green-500" />
-                  ) : (
-                    <AiFillDatabase className="text-red-500" />
-                  )
-                }
-                title="CQL"
-                description={cql_status ? "UP" : "DOWN"}
-                status={cql_status ? statusType.positive : statusType.negative}
-                value={cql_rtt_ms}
-                unit="ms"
-              />
-              <StatusBox
-                icon={
-                  rest_status ? (
-                    <AiFillApi className="text-green-500" />
-                  ) : (
-                    <AiFillApi className="text-red-500" />
-                  )
-                }
-                title="REST"
-                description={rest_status ? "UP" : "DOWN"}
-                status={rest_status ? statusType.positive : statusType.negative}
-                value={rest_rtt_ms}
-                unit="ms"
-              />
-            </div>
-            <div className="flex ">
-              <StatusBox
-                title="ram"
-                description={`${(total_ram / (1000 * 1000 * 1000)).toFixed(
-                  2
-                )} GB`}
-                icon={<MdMemory />}
-                status={statusType.neutral}
-              />
-              <StatusBox
-                title="Uptime"
-                description={uptime.toString()}
-                icon={<AiOutlineFieldTime />}
-                status={statusType.neutral}
-              />
-              <StatusBox
-                title="CPU #"
-                description={cpu_count.toString()}
-                icon={<BsCpuFill />}
-                status={statusType.neutral}
-              />
-            </div>
-          </div>
-        )
-      )}
+          )
+        )}
+      </div>
     </Layout>
   );
 }
