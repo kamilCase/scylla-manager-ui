@@ -49,7 +49,7 @@ function ClusterSelectorDropdown() {
             {data.map((cluster) => (
               <a
                 key={cluster.id}
-                href="#"
+                href={`/cluster/${cluster.id}`}
                 className="block block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600"
                 role="menuitem"
               >
