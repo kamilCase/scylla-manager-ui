@@ -1,5 +1,16 @@
-function ClusterSelectorDropdown({ clustersList }) {
-  console.log(clustersList);
+import { useClusterList } from "utils/hooks";
+import { useRouter } from "next/router";
+
+function ClusterSelectorDropdown() {
+  const { data, error } = useClusterList();
+  const router = useRouter();
+  const { clusterId } = router.query;
+
+  if (error) return <div>error while fetching data</div>;
+  if (!data) return <div>loading...</div>
+
+  const selectedClusterName = data.find((c) => c.id === clusterId)?.name;
+
   return (
     <div className="relative inline-block text-left">
       <div>
@@ -8,7 +19,7 @@ function ClusterSelectorDropdown({ clustersList }) {
           className=" border border-gray-300 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center w-full rounded-md  px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500"
           id="options-menu"
         >
-          Selected cluster: [[NAME]]
+          Selected cluster: {selectedClusterName}
           <svg
             width="20"
             height="20"
@@ -27,7 +38,7 @@ function ClusterSelectorDropdown({ clustersList }) {
           aria-orientation="vertical"
           aria-labelledby="options-menu"
         >
-          {clustersList.map((cluster) => (
+          {data.map((cluster) => (
             <a
               key={cluster.id}
               href="#"

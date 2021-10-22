@@ -23,3 +23,7 @@ export function useCluster(clusterId) {
         : null,
   };
 }
+
+export function useClusterList() {
+  return useSWR("/api/clusters", fetcher);
+}

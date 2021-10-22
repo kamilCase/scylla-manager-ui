@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 function Sidebar() {
   const router = useRouter();
   const { clusterId } = router.query;
-  console.log(clusterId);
   return (
     <div className="h-screen hidden lg:block my-4 ml-4 shadow-lg relative w-80">
       <div className="bg-white h-full rounded-2xl dark:bg-gray-700">
