@@ -1,4 +1,4 @@
-import Link from "next/Link";
+import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { BsInfoSquareFill, BsTerminalFill, BsListTask } from "react-icons/bs";
