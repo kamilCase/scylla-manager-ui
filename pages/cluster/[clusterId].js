@@ -15,16 +15,13 @@ function ClusterDetailsPage() {
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
 
-  //       "scylla_version": "4.3.0-0.20210110.000585522",
-  //       "agent_version": "2.5.1-0.20210824.a3da2707"
-
   return (
     <Layout>
       <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
         <span className="font-bold">Cluster:</span> {data.name}
       </h1>
 
-      {data?.dataCenters.map(
+      {data?.nodes.map(
         ({
           ssl,
           cql_status,
@@ -40,24 +37,29 @@ function ClusterDetailsPage() {
           scylla_version,
           agent_version,
         }) => (
-          <>
-            <h2 className="text-xl font-normal leading-normal mt-0 mb-2 text-blue-300">
-              <span className="font-bold">Data Center:</span> {name}
-            </h2>
-            <div className="flex">
-              <h2 className="text-lg pr-4 font-normal leading-normal mt-0 mb-2 text-blue-300">
+          <div
+            key={host}
+            className="bg-gray-400 bg-opacity-30 shadow-md rounded-xl p-2 w-min"
+          >
+            <div className="flex justify-between">
+              <h2 className="text-base pr-4 font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
                 <span className="font-bold">Host:</span> {host}
               </h2>
-              <h2 className="text-lg pr-4 font-normal leading-normal mt-0 mb-2 text-blue-300">
-                <span className="font-bold">Scylla Version:</span>{" "}
-                {scylla_version}
-              </h2>
-              <h2 className="text-lg pr-4 font-normal leading-normal mt-0 mb-2 text-blue-300">
+              <h2 className="text-base pr-4 font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
                 <span className="font-bold">Agent Version:</span>{" "}
                 {agent_version}
               </h2>
             </div>
-            <div key={name} className="flex justify-evenly">
+            <div className="flex justify-between">
+              <h2 className="text-base font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
+                <span className="font-bold">Data Center:</span> {name}
+              </h2>
+              <h2 className="text-base font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
+                <span className="font-bold">Scylla Version:</span>{" "}
+                {scylla_version}
+              </h2>
+            </div>
+            <div className="flex">
               <StatusBox
                 title="Status"
                 description={status}
@@ -106,27 +108,29 @@ function ClusterDetailsPage() {
                 unit="ms"
               />
             </div>
-            <div key={name} className="flex justify-evenly">
+            <div className="flex ">
               <StatusBox
-                title="Total RAM"
-                description={total_ram}
+                title="ram"
+                description={`${(total_ram / (1000 * 1000 * 1000)).toFixed(
+                  2
+                )} GB`}
                 icon={<MdMemory />}
                 status={statusType.neutral}
               />
               <StatusBox
                 title="Uptime"
-                description={uptime}
+                description={uptime.toString()}
                 icon={<AiOutlineFieldTime />}
                 status={statusType.neutral}
               />
               <StatusBox
                 title="CPU #"
-                description={cpu_count}
+                description={cpu_count.toString()}
                 icon={<BsCpuFill />}
                 status={statusType.neutral}
               />
             </div>
-          </>
+          </div>
         )
       )}
     </Layout>

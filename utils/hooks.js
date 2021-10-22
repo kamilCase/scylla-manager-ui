@@ -19,7 +19,7 @@ export function useCluster(clusterId) {
       cluster && status
         ? {
             ...cluster,
-            dataCenters: status,
+            nodes: status,
           }
         : null,
   };
