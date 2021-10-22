@@ -1,15 +1,21 @@
 import { useClusterList } from "utils/hooks";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 function ClusterSelectorDropdown() {
+  const [isOpen, setIsOpen] = useState(false);
   const { data, error } = useClusterList();
   const router = useRouter();
   const { clusterId } = router.query;
 
   if (error) return <div>error while fetching data</div>;
-  if (!data) return <div>loading...</div>
+  if (!data) return <div>loading...</div>;
 
   const selectedClusterName = data.find((c) => c.id === clusterId)?.name;
+
+  function toggleOpen() {
+    setIsOpen(!isOpen);
+  }
 
   return (
     <div className="relative inline-block text-left">
@@ -18,6 +24,7 @@ function ClusterSelectorDropdown() {
           type="button"
           className=" border border-gray-300 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center w-full rounded-md  px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500"
           id="options-menu"
+          onClick={toggleOpen}
         >
           Selected cluster: {selectedClusterName}
           <svg
@@ -31,27 +38,29 @@ function ClusterSelectorDropdown() {
           </svg>
         </button>
       </div>
-      <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
-        <div
-          className="py-1"
-          role="menu"
-          aria-orientation="vertical"
-          aria-labelledby="options-menu"
-        >
-          {data.map((cluster) => (
-            <a
-              key={cluster.id}
-              href="#"
-              className="block block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600"
-              role="menuitem"
-            >
-              <span className="flex flex-col">
-                <span>{cluster.name}</span>
-              </span>
-            </a>
-          ))}
+      {isOpen && (
+        <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
+          <div
+            className="py-1"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="options-menu"
+          >
+            {data.map((cluster) => (
+              <a
+                key={cluster.id}
+                href="#"
+                className="block block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600"
+                role="menuitem"
+              >
+                <span className="flex flex-col">
+                  <span>{cluster.name}</span>
+                </span>
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
