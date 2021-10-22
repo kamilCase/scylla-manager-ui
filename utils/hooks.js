@@ -9,7 +9,8 @@ export function useCluster(clusterId) {
 
   const { data: status, error: statusError } = useSWR(
     () => (clusterId ? `/api/cluster/${clusterId}/status` : null),
-    fetcher
+    fetcher,
+    { refreshInterval: 6000 }
   );
 
   return {
