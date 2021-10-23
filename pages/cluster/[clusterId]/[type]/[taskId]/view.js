@@ -11,7 +11,7 @@ import { statusType } from "utils/utils";
 
 function ClusterTasksPage() {
   const router = useRouter();
-  const { clusterId } = router.query;
+  const { clusterId, type, taskId } = router.query;
 
   const { data, error } = useTasks(clusterId);
   console.log(data);
@@ -22,7 +22,7 @@ function ClusterTasksPage() {
   return (
     <Layout>
       <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
-        <span className="font-bold">Tasks</span>
+        <span className="font-bold">{type}</span>
       </h1>
       <div className="flex">
         {data?.nodes.map(
