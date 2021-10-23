@@ -26,7 +26,7 @@ function StatusBox({ title, icon, status, description, value, unit }) {
         </IconContainer>
       )}
       <div className="px-4 py-5 sm:p-2">
-        <p className="text-sm leading-5 font-medium truncate">
+        <p className="text-sm leading-5 font-medium">
           <span>
             {title.toUpperCase()}
             <span className="ml-2 h-3 w-3 inline-flex">

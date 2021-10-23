@@ -25,6 +25,27 @@ export function useCluster(clusterId) {
   };
 }
 
+export function useTasks(clusterId) {
+  const { data: task, error: taskError } = useSWR(
+    () => (clusterId ? `/api/cluster/${clusterId}/tasks?all=true`: null),
+    fetcher,
+    { refreshInterval: 6000 }
+  );
+
+  return {
+    error: taskError,
+    data:
+      task
+        ? {
+            ...task,
+            nodes: task,
+          }
+        : null,
+  };
+
+
+}
+
 export function useClusterList() {
   return useSWR("/api/clusters", fetcher);
 }

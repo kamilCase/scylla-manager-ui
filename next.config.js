@@ -15,6 +15,12 @@ module.exports = {
         destination: '/cluster/:clusterId/status',
         permanent: true,
       },
+      {
+        source: '/cluster/:clusterId/task/:type/:taskId',
+        destination: '/cluster/:clusterId/:type/:taskId/view',
+        permanent: true,
+      },
+
     ]
   },
 };
