@@ -8,7 +8,6 @@ import { BsCpuFill } from "react-icons/bs";
 import StatusBox from "components/StatusBox";
 import { statusType } from "utils/utils";
 
-
 function ClusterTasksPage() {
   const router = useRouter();
   const { clusterId, type, taskId } = router.query;
@@ -17,7 +16,6 @@ function ClusterTasksPage() {
   console.log(data);
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
-
 
   return (
     <Layout>
@@ -38,56 +36,71 @@ function ClusterTasksPage() {
             next_activation,
           }) => (
             <div
-              key='bla'
+              key="bla"
               className="bg-gray-400 bg-opacity-30 shadow-md rounded-xl p-2 m-2 w-min"
             >
               <div className="flex justify-between">
                 <h2 className="text-base pr-4 font-normal leading-normal m-2 text-blue-400 whitespace-nowrap">
-                  <span className="font-bold">Task Type:</span> <Link href={`/cluster/${clusterId}/task/${type}/${id}`}>
-              <a href="#">
-               <span>{type}</span>
-              </a>
-            </Link>
+                  <span className="font-bold">Task Type:</span>{" "}
+                  <Link href={`/cluster/${clusterId}/task/${type}/${id}`}>
+                    <a href="#">
+                      <span>{type}</span>
+                    </a>
+                  </Link>
                 </h2>
               </div>
-              <div class="flex">
-                  <StatusBox
-                    title="Enabled"
-                    description={ enabled ? "Enabled": "Disabled" }
-                    status={ enabled ? statusType.positive : statusType.negative }
-                  />
+              <div className="flex">
+                <StatusBox
+                  title="Enabled"
+                  description={enabled ? "Enabled" : "Disabled"}
+                  status={enabled ? statusType.positive : statusType.negative}
+                />
 
-                  <StatusBox
-                    title="Schedule"
-                    description={schedule.interval}
-                    status={statusType.neutral}
-                  />
+                <StatusBox
+                  title="Schedule"
+                  description={schedule.interval}
+                  status={statusType.neutral}
+                />
 
-                  <StatusBox
-                    title="Status"
-                    description={status}
-                    status={ status === "DONE" || status === "RUNNING" || status === "NEW" ? statusType.positive : statusType.negative }
-                  />
+                <StatusBox
+                  title="Status"
+                  description={status}
+                  status={
+                    status === "DONE" ||
+                    status === "RUNNING" ||
+                    status === "NEW"
+                      ? statusType.positive
+                      : statusType.negative
+                  }
+                />
               </div>
               <div className="flex justify-between">
-                  <StatusBox
-                    title="Start"
-                    description={ new Date(start_time).toISOString().replace(/T/, ' ').replace(/\..+/, '') }
-                    status={ statusType.neutral }
-                  />
+                <StatusBox
+                  title="Start"
+                  description={new Date(start_time)
+                    .toISOString()
+                    .replace(/T/, " ")
+                    .replace(/\..+/, "")}
+                  status={statusType.neutral}
+                />
 
-                  <StatusBox
-                    title="End"
-                    description={ new Date(end_time).toISOString().replace(/T/, ' ').replace(/\..+/, '') }
-                    status={ statusType.neutral }
-                  />
+                <StatusBox
+                  title="End"
+                  description={new Date(end_time)
+                    .toISOString()
+                    .replace(/T/, " ")
+                    .replace(/\..+/, "")}
+                  status={statusType.neutral}
+                />
 
-                  <StatusBox
-                    title="Next Activation"
-                    description={ new Date(next_activation).toISOString().replace(/T/, ' ').replace(/\..+/, '') }
-                    status={ statusType.neutral }
-                  />
-
+                <StatusBox
+                  title="Next Activation"
+                  description={new Date(next_activation)
+                    .toISOString()
+                    .replace(/T/, " ")
+                    .replace(/\..+/, "")}
+                  status={statusType.neutral}
+                />
               </div>
             </div>
           )
