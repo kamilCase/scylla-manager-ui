@@ -6,6 +6,7 @@ import { AiFillDatabase, AiFillApi, AiOutlineFieldTime } from "react-icons/ai";
 import { BsCpuFill } from "react-icons/bs";
 import StatusBox from "components/StatusBox";
 import { statusType } from "utils/utils";
+import { StatusContainer } from "components/StatusBox";
 
 function ClusterStatusPage() {
   const router = useRouter();
@@ -21,7 +22,7 @@ function ClusterStatusPage() {
       <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
         <span className="font-bold">Cluster:</span> {data.name}
       </h1>
-      <div className="flex">
+      <StatusContainer>
         {data?.nodes.map(
           ({
             ssl,
@@ -138,7 +139,7 @@ function ClusterStatusPage() {
             </div>
           )
         )}
-      </div>
+      </StatusContainer>
     </Layout>
   );
 }

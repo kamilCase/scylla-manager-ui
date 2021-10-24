@@ -7,6 +7,7 @@ import { AiFillDatabase, AiFillApi, AiOutlineFieldTime } from "react-icons/ai";
 import { BsCpuFill } from "react-icons/bs";
 import StatusBox from "components/StatusBox";
 import { statusType } from "utils/utils";
+import { StatusContainer } from "components/StatusBox";
 
 function ClusterTasksPage() {
   const router = useRouter();
@@ -22,8 +23,8 @@ function ClusterTasksPage() {
       <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
         <span className="font-bold">{type}</span>
       </h1>
-      <div className="flex">
-        {data?.nodes.map(
+      <StatusContainer>
+        {data?.map(
           ({
             id,
             type,
@@ -105,7 +106,7 @@ function ClusterTasksPage() {
             </div>
           )
         )}
-      </div>
+      </StatusContainer>
     </Layout>
   );
 }

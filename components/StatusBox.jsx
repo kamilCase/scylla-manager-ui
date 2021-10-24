@@ -2,13 +2,18 @@ import styled from "@emotion/styled";
 import PropTypes from "prop-types";
 import { statusType } from "utils/utils";
 
-const IconContainer = styled.div(`
+export const IconContainer = styled.div(`
 & > svg {
     width: 100%;
     height: 100%;
 }
 `);
 
+export const StatusContainer = styled.div`
+  display: flex;
+  width: 85vw;
+  flex-wrap: wrap;
+`;
 const statusToColor = {
   [statusType.positive]: "green-500",
   [statusType.negative]: "red-500",
