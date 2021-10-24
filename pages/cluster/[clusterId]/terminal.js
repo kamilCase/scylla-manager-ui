@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import styled from "@emotion/styled";
 import { v4 as uuid } from "uuid";
 import Layout from "components/Layout";
@@ -10,7 +11,7 @@ const messageTypes = {
 };
 
 const Terminal = styled.div`
-  height: 80vh;
+  height: 70vh;
 `;
 
 // TODO: can we assume returned messages and ips order?
@@ -168,13 +169,20 @@ function ClusterTerminalPage() {
   return (
     <Layout>
       <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
-        <span className="font-bold">TERMINAL PAGE</span>
+        <Image
+          className="mt-2 pr-2"
+          src="/scylla-monitor.svg"
+          alt="monitor"
+          width={120}
+          height={100}
+        />
+        <span className="relative -top-3 font-bold">Terminal</span>
       </h1>
 
       <Terminal className="w-full">
         <div
           className="coding inverse-toggle px-5 pt-4 shadow-lg text-gray-100 text-sm font-mono subpixel-antialiased 
-              bg-gray-800 bg-  pb-6 rounded-lg leading-normal h-full overflow-y-scroll"
+              bg-gray-800 pb-6 rounded-lg leading-normal h-full overflow-y-auto"
         >
           {messages.map(({ message, type, ip, id }) =>
             type === messageTypes.output ? (

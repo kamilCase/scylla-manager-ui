@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Image from "next/image";
 import Layout from "components/Layout";
 import { useCluster } from "utils/hooks";
 import { MdHttps, MdNoEncryption, MdMemory } from "react-icons/md";
@@ -20,7 +21,16 @@ function ClusterStatusPage() {
   return (
     <Layout>
       <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
-        <span className="font-bold">Cluster:</span> {data.name}
+        <Image
+          className="mt-2 pr-2"
+          src="/scylla-enterprise.svg"
+          alt="enterprise"
+          width={120}
+          height={100}
+        />
+        <span className="relative -top-3">
+          <span className="font-bold">Cluster:</span> {data.name}
+        </span>
       </h1>
       <StatusContainer>
         {data?.nodes.map(

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { BsInfoSquareFill, BsTerminalFill, BsListTask } from "react-icons/bs";
+import styled from "@emotion/styled";
 
 function Sidebar() {
   const router = useRouter();
@@ -18,11 +19,14 @@ function Sidebar() {
       : inactiveLinkClasses;
   }
 
+  const Container = styled.div`
+    height: 96vh;
+  `;
   return (
-    <div className="h-screen hidden lg:block my-4 ml-4 shadow-lg relative w-80">
+    <Container className=" hidden lg:block my-4 ml-4 shadow-lg relative w-62">
       <div className="bg-white h-full rounded-2xl dark:bg-gray-700">
         <div className="flex items-center justify-center pt-6">
-          <Image src="/logo-scylla.svg" height={40} width={200} />
+          <Image src="/logo-scylla.svg" alt="scylla" height={40} width={200} />
         </div>
         <nav className="mt-6">
           <div>
@@ -64,7 +68,7 @@ function Sidebar() {
           </div>
         </nav>
       </div>
-    </div>
+    </Container>
   );
 }
 
