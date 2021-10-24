@@ -71,17 +71,62 @@ function useTerminal(clusterId) {
   return [messages, submitMessage, clear];
 }
 
+// TODO: for the hackathon, history is unlimited
+function useMessageHistory() {
+  const [messageHistory, setMessageHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(0);
+
+  const updateHistory = (message) => {
+    setMessageHistory([message, ...messageHistory]);
+    setHistoryIndex(0);
+  };
+
+  const olderMessage = () => {
+    if (messageHistory?.length) {
+      const message = messageHistory[historyIndex];
+      setHistoryIndex((prevIndex) =>
+        prevIndex === messageHistory.length - 1 ? prevIndex : prevIndex + 1
+      );
+
+      return message;
+    }
+  };
+
+  const newerMessage = () => {
+    if (messageHistory?.length > 1) {
+      const message = messageHistory[historyIndex - 1];
+      setHistoryIndex((prevIndex) => (prevIndex === 0 ? 0 : prevIndex - 1));
+
+      return message;
+    }
+  };
+  return [updateHistory, olderMessage, newerMessage];
+}
+
 function ClusterTerminalPage() {
   const router = useRouter();
   const { clusterId } = router.query;
 
   const [message, setMessage] = useState([]);
   const [messages, submitMessage, clear] = useTerminal(clusterId);
-  const messagesEndRef = useRef(null);
+  const [updateHistory, olderMessage, newerMessage] = useMessageHistory();
+  const inputRef = useRef(null);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  useEffect(
+    function scrollToEnd() {
+      inputRef.current?.scrollIntoView({ behavior: "smooth" });
+    },
+    [messages]
+  );
+
+  useEffect(
+    function moveInputCursorToEnd() {
+      if (inputRef.current) {
+        inputRef.current.selectionStart = message.length + 1;
+      }
+    },
+    [message]
+  );
 
   if (!clusterId) return <div>loading...</div>;
 
@@ -102,7 +147,7 @@ function ClusterTerminalPage() {
                 <em>{message}</em>
               </div>
             ) : (
-              <div className="mt-4 flex" key={id} ref={messagesEndRef}>
+              <div className="mt-4 flex" key={id}>
                 <span className="text-green-400">$</span>
                 <p className="flex-1 typing items-center pl-2">{message}</p>
               </div>
@@ -113,12 +158,14 @@ function ClusterTerminalPage() {
               onSubmit={(e) => {
                 e.preventDefault();
                 submitMessage(message);
+                updateHistory(message);
                 setMessage([]);
               }}
             >
               <div className="mt-4 flex">
                 <span className="text-green-400">$</span>
                 <input
+                  ref={inputRef}
                   className="flex-1 typing items-center pl-2 bg-gray-800 outline-none focus:outline-none border-gray-800"
                   type="text"
                   value={message}
@@ -126,7 +173,20 @@ function ClusterTerminalPage() {
                     if (e.ctrlKey && e.key === "u") {
                       e.preventDefault();
                       clear();
-                      console.log("clean");
+                    }
+                    if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      const msg = olderMessage();
+                      if (msg) {
+                        setMessage(msg);
+                      }
+                    }
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      const msg = newerMessage();
+                      if (msg) {
+                        setMessage(msg);
+                      }
                     }
                   }}
                   onChange={(e) => setMessage(e.target.value)}
