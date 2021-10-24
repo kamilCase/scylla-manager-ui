@@ -13,6 +13,21 @@ const Terminal = styled.div`
   height: 80vh;
 `;
 
+// TODO: can we assume returned messages and ips order?
+const colors = [
+  "blue",
+  "purple",
+  "yellow",
+  "red",
+  "Indigo",
+  "fuchsia",
+  "orange",
+  "rose",
+  "lime",
+  "pink",
+  "teal",
+];
+
 function useTerminal(clusterId) {
   const [messages, setMessages] = useState([]);
   const [ws, setWs] = useState();
@@ -46,9 +61,15 @@ function useTerminal(clusterId) {
 
         ws.onmessage = (e) => {
           const message = e.data;
+          const ipSeparator = message.indexOf("|");
           setMessages([
             ...messages,
-            { message, type: messageTypes.output, id: uuid() },
+            {
+              message: message.slice(ipSeparator + 2), // "separator and space"
+              ip: message.slice(0, ipSeparator),
+              type: messageTypes.output,
+              id: uuid(),
+            },
           ]);
         };
       }
@@ -112,6 +133,20 @@ function ClusterTerminalPage() {
   const [updateHistory, olderMessage, newerMessage] = useMessageHistory();
   const inputRef = useRef(null);
 
+  const [ips, setIps] = useState([]);
+  const getIpColor = useCallback(
+    (ip) => {
+      if (ips.indexOf(ip) !== -1) {
+        return colors[ips.indexOf(ip)];
+      } else {
+        const color = colors[ips.length - 1];
+        setIps((prevIps) => [...prevIps, ip]);
+        return color;
+      }
+    },
+    [ips, setIps]
+  );
+
   useEffect(
     function scrollToEnd() {
       inputRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -139,11 +174,12 @@ function ClusterTerminalPage() {
       <Terminal className="w-full">
         <div
           className="coding inverse-toggle px-5 pt-4 shadow-lg text-gray-100 text-sm font-mono subpixel-antialiased 
-              bg-gray-800  pb-6 rounded-lg leading-normal h-full overflow-y-scroll"
+              bg-gray-800 bg-  pb-6 rounded-lg leading-normal h-full overflow-y-scroll"
         >
-          {messages.map(({ message, type, id }) =>
+          {messages.map(({ message, type, ip, id }) =>
             type === messageTypes.output ? (
               <div className="flex-1 typing items-center pl-2" key={id}>
+                <span className={`text-${getIpColor(ip)}-400`}>{ip} </span>
                 <em>{message}</em>
               </div>
             ) : (
