@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import styled from "@emotion/styled";
 import { v4 as uuid } from "uuid";
-
+import { BsList } from "react-icons/bs";
 const messageTypes = {
   input: "INPUT",
   output: "OUTPUT",
@@ -200,6 +200,7 @@ function parseMessages(messages) {
 
 function Terminal({ clusterId, host }) {
   const [message, setMessage] = useState([]);
+  const [isGridView, setIsGridView] = useState(true);
   const [messages, submitMessage, clear] = useTerminal(clusterId, host);
   const [updateHistory, olderMessage, newerMessage] = useMessageHistory();
   const inputRef = useRef(null);
@@ -244,6 +245,30 @@ function Terminal({ clusterId, host }) {
         className="coding inverse-toggle px-5 pt-4 shadow-lg text-gray-100 text-sm font-mono subpixel-antialiased 
               bg-gray-800 pb-6 rounded-lg leading-normal h-full overflow-y-auto"
       >
+        <div
+          key="view-toggle"
+          className="bg-gray-200 text-sm text-gray-500 leading-none border-2 border-gray-200 rounded-full inline-flex sticky top-0"
+        >
+          <button
+            className={`inline-flex items-center transition-colors duration-300 ease-in focus:outline-none hover:text-blue-400 focus:text-blue-400 rounded-l-full px-4 py-2 ${
+              isGridView ? "bg-white rounded-full text-blue-400" : ""
+            }`}
+            onClick={() => setIsGridView((isGr) => !isGr)}
+          >
+            <BsList className="transform rotate-90" />
+            <span className="ml-1">Grid</span>
+          </button>
+          <button
+            className={`inline-flex items-center transition-colors duration-300 ease-in focus:outline-none hover:text-blue-400 focus:text-blue-400 rounded-r-full px-4 py-2 ${
+              !isGridView ? "bg-white rounded-full text-blue-400" : ""
+            }`}
+            id="list"
+            onClick={() => setIsGridView((isGr) => !isGr)}
+          >
+            <BsList />
+            <span className="ml-1">List</span>
+          </button>
+        </div>
         {parsedMessages?.map(({ input, output, id, inProgress }) => (
           <div key={id}>
             {inProgress && <Spinner />}
@@ -251,7 +276,7 @@ function Terminal({ clusterId, host }) {
               <span className="text-green-400">$</span>
               <p className="flex-1 typing items-center pl-2">{input.message}</p>
             </div>
-            <div className="flex" key={`${id}-output`}>
+            <div className={`${isGridView ? "flex" : ""}`} key={`${id}-output`}>
               {output &&
                 Object.keys(output).flatMap((ip) => (
                   <div className="flex-col mr-8" key={`${id}-${ip}`}>
