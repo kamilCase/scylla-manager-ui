@@ -4,12 +4,12 @@ import useSWR from "swr";
 const REFRESH_INTERVAL = 5000;
 export function useCluster(clusterId) {
   const { data: cluster, error: clusterError } = useSWR(
-    () => (clusterId ? `/api/cluster/${clusterId}` : null),
+    () => (clusterId ? `/api/v1/cluster/${clusterId}` : null),
     fetcher
   );
 
   const { data: status, error: statusError } = useSWR(
-    () => (clusterId ? `/api/cluster/${clusterId}/status` : null),
+    () => (clusterId ? `/api/v1/cluster/${clusterId}/status` : null),
     fetcher,
     { refreshInterval: REFRESH_INTERVAL }
   );
@@ -28,12 +28,12 @@ export function useCluster(clusterId) {
 
 export function useTasks(clusterId) {
   return useSWR(
-    () => (clusterId ? `/api/cluster/${clusterId}/tasks?all=true` : null),
+    () => (clusterId ? `/api/v1/cluster/${clusterId}/tasks?all=true` : null),
     fetcher,
     { refreshInterval: REFRESH_INTERVAL }
   );
 }
 
 export function useClusterList() {
-  return useSWR("/api/clusters", fetcher);
+  return useSWR("/api/v1/clusters", fetcher);
 }

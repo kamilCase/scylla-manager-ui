@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import styled from "@emotion/styled";
 import { v4 as uuid } from "uuid";
 import Layout from "components/Layout";
+import logo from "../../../icons/scylla-monitor.svg";
 
 const messageTypes = {
   input: "INPUT",
@@ -169,14 +170,14 @@ function ClusterTerminalPage() {
   return (
     <Layout>
       <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
-        <Image
-          className="mt-2 pr-2"
-          src="/scylla-monitor.svg"
+        <img
+          className="mt-2 pr-2 inline"
+          src={logo}
           alt="monitor"
           width={120}
           height={100}
         />
-        <span className="relative -top-3 font-bold">Terminal</span>
+        <span className="relative top-3 font-bold">Terminal</span>
       </h1>
 
       <Terminal className="w-full">
