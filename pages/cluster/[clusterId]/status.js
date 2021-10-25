@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { useRouter } from "next/router";
+import Link from "next/link";
 import Layout from "components/Layout";
 import { useCluster } from "utils/hooks";
 import { MdHttps, MdNoEncryption, MdMemory } from "react-icons/md";
 import { AiFillDatabase, AiFillApi, AiOutlineFieldTime } from "react-icons/ai";
-import { BsCpuFill } from "react-icons/bs";
+import { BsCpuFill, BsTerminalFill } from "react-icons/bs";
 import StatusBox from "components/StatusBox";
 import { statusType } from "utils/utils";
 import { StatusContainer } from "components/StatusBox";
@@ -146,6 +147,17 @@ function ClusterStatusPage() {
                   icon={<BsCpuFill />}
                   status={statusType.neutral}
                 />
+                <div
+                  key={`terminal-${host}`}
+                  className="flex items-center bg-gray-400 overflow-hidden shadow rounded-lg w-24 md:w-32 relative m-2"
+                >
+                  <Link href={`/cluster/${clusterId}/terminal/${host}`}>
+                    <a href="#">
+                      <BsTerminalFill className="w-10 h-10 m-2" />
+                    </a>
+                  </Link>
+                  <span className="inline">Connect</span>
+                </div>
               </div>
             </div>
           )

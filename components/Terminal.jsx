@@ -1,10 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/router";
 import styled from "@emotion/styled";
 import { v4 as uuid } from "uuid";
-import Layout from "components/Layout";
-import logo from "../../../icons/scylla-monitor.svg";
 
 const messageTypes = {
   input: "INPUT",
@@ -12,23 +9,23 @@ const messageTypes = {
   done: "DONE",
 };
 
-const Terminal = styled.div`
+const TerminalContainer = styled.div`
   height: 70vh;
 `;
 
 // TODO: can we assume returned messages and ips order?
 const colors = [
-  "blue",
-  "purple",
-  "yellow",
-  "red",
-  "Indigo",
-  "fuchsia",
-  "orange",
-  "rose",
-  "lime",
-  "pink",
-  "teal",
+  "text-blue-400",
+  "text-purple-400",
+  "text-yellow-400",
+  "text-red-400",
+  "text-indigo-400",
+  "text-fuchsia-400",
+  "text-orange-400",
+  "text-rose-400",
+  "text-lime-400",
+  "text-pink-400",
+  "text-teal-400",
 ];
 
 const Spinner = () => (
@@ -46,7 +43,7 @@ const Spinner = () => (
     </svg>
   </div>
 );
-function useTerminal(clusterId) {
+function useTerminal(clusterId, host) {
   const [messages, setMessages] = useState([]);
   const [ws, setWs] = useState();
   useEffect(
@@ -54,7 +51,9 @@ function useTerminal(clusterId) {
       let wsI;
       const isBrowser = typeof window !== "undefined";
       if (isBrowser && clusterId) {
-        const url = `ws://${"18.194.211.185"}:5080/api/v1/cluster/${clusterId}/exec_ws`;
+        const url = `ws://${"18.194.211.185"}:5080/api/v1/cluster/${clusterId}/exec_ws${
+          host ? `?host=${host}` : ""
+        }`;
         wsI = new WebSocket(url);
         setWs(wsI);
       }
@@ -199,12 +198,9 @@ function parseMessages(messages) {
   return parsed;
 }
 
-function ClusterTerminalPage() {
-  const router = useRouter();
-  const { clusterId } = router.query;
-
+function Terminal({ clusterId, host }) {
   const [message, setMessage] = useState([]);
-  const [messages, submitMessage, clear] = useTerminal(clusterId);
+  const [messages, submitMessage, clear] = useTerminal(clusterId, host);
   const [updateHistory, olderMessage, newerMessage] = useMessageHistory();
   const inputRef = useRef(null);
 
@@ -243,97 +239,80 @@ function ClusterTerminalPage() {
   const parsedMessages = parseMessages(messages);
 
   return (
-    <Layout>
-      <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
-        <img
-          className="mt-2 pr-2 inline"
-          src={logo}
-          alt="monitor"
-          width={120}
-          height={100}
-        />
-        <span className="relative top-3 font-bold">Terminal</span>
-      </h1>
-
-      <Terminal className="w-full">
-        <div
-          className="coding inverse-toggle px-5 pt-4 shadow-lg text-gray-100 text-sm font-mono subpixel-antialiased 
+    <TerminalContainer className="w-full">
+      <div
+        className="coding inverse-toggle px-5 pt-4 shadow-lg text-gray-100 text-sm font-mono subpixel-antialiased 
               bg-gray-800 pb-6 rounded-lg leading-normal h-full overflow-y-auto"
-        >
-          {parsedMessages?.map(({ input, output, id, inProgress }) => (
-            <div key={id}>
-              {inProgress && <Spinner />}
-              <div className="mt-4 flex" key={`${id}-input`}>
-                <span className="text-green-400">$</span>
-                <p className="flex-1 typing items-center pl-2">
-                  {input.message}
-                </p>
-              </div>
-              <div className="flex" key={`${id}-output`}>
-                {output &&
-                  Object.keys(output).flatMap((ip) => (
-                    <div className="flex-col mr-8" key={`${id}-${ip}`}>
-                      {output[ip]?.map((message) => (
-                        <div
-                          className="flex-col typing items-center pl-2"
-                          key={message.id}
-                        >
-                          <span className={`text-${getIpColor(ip)}-400 `}>
-                            {ip}{" "}
-                          </span>
-                          <em>{message.message}</em>
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-              </div>
+      >
+        {parsedMessages?.map(({ input, output, id, inProgress }) => (
+          <div key={id}>
+            {inProgress && <Spinner />}
+            <div className="mt-4 flex" key={`${id}-input`}>
+              <span className="text-green-400">$</span>
+              <p className="flex-1 typing items-center pl-2">{input.message}</p>
             </div>
-          ))}
-          <div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                submitMessage(message);
-                updateHistory(message);
-                setMessage([]);
-              }}
-            >
-              <div className="mt-4 flex">
-                <span className="text-green-400">$</span>
-                <input
-                  ref={inputRef}
-                  className="flex-1 typing items-center pl-2 bg-gray-800 outline-none focus:outline-none border-gray-800"
-                  type="text"
-                  value={message}
-                  onKeyDown={(e) => {
-                    if (e.ctrlKey && e.key === "u") {
-                      e.preventDefault();
-                      clear();
-                    }
-                    if (e.key === "ArrowUp") {
-                      e.preventDefault();
-                      const msg = olderMessage();
-                      if (msg) {
-                        setMessage(msg);
-                      }
-                    }
-                    if (e.key === "ArrowDown") {
-                      e.preventDefault();
-                      const msg = newerMessage();
-                      if (msg) {
-                        setMessage(msg);
-                      }
-                    }
-                  }}
-                  onChange={(e) => setMessage(e.target.value)}
-                />
-              </div>
-            </form>
+            <div className="flex" key={`${id}-output`}>
+              {output &&
+                Object.keys(output).flatMap((ip) => (
+                  <div className="flex-col mr-8" key={`${id}-${ip}`}>
+                    {output[ip]?.map((message) => (
+                      <div
+                        className="flex-col typing items-center pl-2"
+                        key={message.id}
+                      >
+                        <span className={getIpColor(ip)}>{ip} </span>
+                        <em>{message.message}</em>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+            </div>
           </div>
+        ))}
+        <div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              submitMessage(message);
+              updateHistory(message);
+              setMessage([]);
+            }}
+          >
+            <div className="mt-4 flex">
+              <span className="text-green-400">$</span>
+              <input
+                ref={inputRef}
+                className="flex-1 typing items-center pl-2 bg-gray-800 outline-none focus:outline-none border-gray-800"
+                type="text"
+                value={message}
+                onKeyDown={(e) => {
+                  if (e.ctrlKey && e.key === "u") {
+                    e.preventDefault();
+                    clear();
+                  }
+                  if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    const msg = olderMessage();
+                    if (msg) {
+                      setMessage(msg);
+                    }
+                  }
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    const msg = newerMessage();
+                    if (msg) {
+                      setMessage(msg);
+                    }
+                  }
+                }}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+            </div>
+          </form>
         </div>
-      </Terminal>
-    </Layout>
+      </div>
+    </TerminalContainer>
   );
 }
 
-export default ClusterTerminalPage;
+export default Terminal;
