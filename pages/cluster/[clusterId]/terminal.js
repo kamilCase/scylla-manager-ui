@@ -38,7 +38,7 @@ function useTerminal(clusterId) {
       let wsI;
       const isBrowser = typeof window !== "undefined";
       if (isBrowser && clusterId) {
-        const url = `ws://${window.location.hostname}:5080/api/v1/cluster/${clusterId}/exec_ws`;
+        const url = `ws://${"18.194.211.185"}:5080/api/v1/cluster/${clusterId}/exec_ws`;
         wsI = new WebSocket(url);
         setWs(wsI);
       }
@@ -126,6 +126,47 @@ function useMessageHistory() {
   return [updateHistory, olderMessage, newerMessage];
 }
 
+function parseMessages(messages) {
+  if (!messages.length) {
+    return [];
+  }
+
+  let parsed = [],
+    output = {},
+    lastInput;
+  for (let message of messages) {
+    if (message.type === messageTypes.input) {
+      if (lastInput) {
+        parsed.push({
+          input: lastInput,
+          output,
+        });
+      }
+
+      lastInput = message;
+    } else {
+      let o = {
+        ...output,
+        [message.ip]: output[message.ip]
+          ? [...output[message.ip], message]
+          : [message],
+      };
+      output = o;
+    }
+  }
+
+  if (messages[messages.length - 1].type === messageTypes.input) {
+    parsed.push({ input: lastInput });
+  } else {
+    parsed.push({
+      input: lastInput,
+      output,
+    });
+  }
+
+  return parsed;
+}
+
 function ClusterTerminalPage() {
   const router = useRouter();
   const { clusterId } = router.query;
@@ -167,6 +208,8 @@ function ClusterTerminalPage() {
 
   if (!clusterId) return <div>loading...</div>;
 
+  const parsedMessages = parseMessages(messages);
+
   return (
     <Layout>
       <h1 className="text-6xl font-normal leading-normal mt-0 mb-2 text-blue-400">
@@ -185,10 +228,38 @@ function ClusterTerminalPage() {
           className="coding inverse-toggle px-5 pt-4 shadow-lg text-gray-100 text-sm font-mono subpixel-antialiased 
               bg-gray-800 pb-6 rounded-lg leading-normal h-full overflow-y-auto"
         >
-          {messages.map(({ message, type, ip, id }) =>
+          {parsedMessages?.map(({ input, output }) => (
+            <div key={`${input.id}-container`}>
+              <div className="mt-4 flex" key={input.id}>
+                <span className="text-green-400">$</span>
+                <p className="flex-1 typing items-center pl-2">
+                  {input.message}
+                </p>
+              </div>
+              <div className="flex" key={input.id + "out"}>
+                {output &&
+                  Object.keys(output).flatMap((ip) => (
+                    <div className="flex-col mr-8" key={ip}>
+                      {output[ip]?.map((message) => (
+                        <div
+                          className="flex-col typing items-center pl-2"
+                          key={message.id}
+                        >
+                          <span className={`text-${getIpColor(ip)}-400 `}>
+                            {ip}{" "}
+                          </span>
+                          <em>{message.message}</em>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          ))}
+          {/* {messages.map(({ message, type, ip, id }) =>
             type === messageTypes.output ? (
               <div className="flex-1 typing items-center pl-2" key={id}>
-                <span className={`text-${getIpColor(ip)}-400`}>{ip} </span>
+                <span className={`text-${getIpColor(ip)}-400 `}>{ip} </span>
                 <em>{message}</em>
               </div>
             ) : (
@@ -197,7 +268,7 @@ function ClusterTerminalPage() {
                 <p className="flex-1 typing items-center pl-2">{message}</p>
               </div>
             )
-          )}
+          )} */}
           <div>
             <form
               onSubmit={(e) => {
