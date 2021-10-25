@@ -1,7 +1,8 @@
-import { fetcher } from "./utils";
+import {fetcher} from "./utils";
 import useSWR from "swr";
 
 const REFRESH_INTERVAL = 5000;
+
 export function useCluster(clusterId) {
   const { data: cluster, error: clusterError } = useSWR(
     () => (clusterId ? `/api/v1/cluster/${clusterId}` : null),
@@ -19,9 +20,9 @@ export function useCluster(clusterId) {
     data:
       cluster && status
         ? {
-            ...cluster,
-            nodes: status,
-          }
+          ...cluster,
+          nodes: status,
+        }
         : null,
   };
 }
@@ -29,6 +30,14 @@ export function useCluster(clusterId) {
 export function useTasks(clusterId) {
   return useSWR(
     () => (clusterId ? `/api/v1/cluster/${clusterId}/tasks?all=true` : null),
+    fetcher,
+    { refreshInterval: REFRESH_INTERVAL }
+  );
+}
+
+export function useBackups(clusterId) {
+  return useSWR(
+    () => (clusterId ? `/api/cluster/${clusterId}/backups` : null),
     fetcher,
     { refreshInterval: REFRESH_INTERVAL }
   );

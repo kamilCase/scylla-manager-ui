@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { BsInfoSquareFill, BsTerminalFill, BsListTask } from "react-icons/bs";
+import {useRouter} from "next/router";
+import {BsInfoSquareFill, BsTerminalFill, BsListTask, BsAlarm} from "react-icons/bs";
 import styled from "@emotion/styled";
 import logo from "../icons/logo-scylla.svg";
 
@@ -55,6 +55,20 @@ function Sidebar() {
                 <span className="mx-4 text-sm font-normal">Tasks</span>
               </a>
             </Link>
+            { /* WIP */}
+            {/*<Link href={`/cluster/${clusterId}/backups`}>*/}
+            {/*  <a*/}
+            {/*    className={`w-full font-thin uppercase flex items-center p-4 my-2 transition-colors duration-200 justify-start ${getClassesForRouteLink(*/}
+            {/*      "backups"*/}
+            {/*    )}`}*/}
+            {/*    href="#"*/}
+            {/*  >*/}
+            {/*    <span className="text-left">*/}
+            {/*      <BsAlarm />*/}
+            {/*    </span>*/}
+            {/*    <span className="mx-4 text-sm font-normal">Backups</span>*/}
+            {/*  </a>*/}
+            {/*</Link>*/}
             <Link href={`/cluster/${clusterId}/terminal`}>
               <a
                 className={`w-full font-thin uppercase flex items-center p-4 my-2 transition-colors duration-200 justify-start ${getClassesForRouteLink(
