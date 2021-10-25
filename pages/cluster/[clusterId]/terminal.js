@@ -9,6 +9,7 @@ import logo from "../../../icons/scylla-monitor.svg";
 const messageTypes = {
   input: "INPUT",
   output: "OUTPUT",
+  done: "DONE",
 };
 
 const Terminal = styled.div`
@@ -30,6 +31,21 @@ const colors = [
   "teal",
 ];
 
+const Spinner = () => (
+  <div className="h-8 w-8 bg-gray-700 rounded-lg absolute bottom-20 right-10">
+    <svg
+      fill="none"
+      className="w-8 h-8 animate-spin"
+      viewBox="0 0 32 32"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M15.165 8.53a.5.5 0 01-.404.58A7 7 0 1023 16a.5.5 0 011 0 8 8 0 11-9.416-7.874.5.5 0 01.58.404z"
+        fill="currentColor"
+      />
+    </svg>
+  </div>
+);
 function useTerminal(clusterId) {
   const [messages, setMessages] = useState([]);
   const [ws, setWs] = useState();
@@ -63,8 +79,18 @@ function useTerminal(clusterId) {
 
         ws.onmessage = (e) => {
           const message = e.data;
+          if (message?.includes("___SM_COMMAND_DONE")) {
+            return setMessages([
+              ...messages,
+              {
+                message: message,
+                type: messageTypes.done,
+                id: uuid(),
+              },
+            ]);
+          }
           const ipSeparator = message.indexOf("|");
-          setMessages([
+          return setMessages([
             ...messages,
             {
               message: message.slice(ipSeparator + 2), // "separator and space"
@@ -136,31 +162,37 @@ function parseMessages(messages) {
     lastInput;
   for (let message of messages) {
     if (message.type === messageTypes.input) {
-      if (lastInput) {
-        parsed.push({
-          input: lastInput,
-          output,
-        });
-      }
-
       lastInput = message;
-    } else {
-      let o = {
+    } else if (message.type === messageTypes.output) {
+      output = {
         ...output,
         [message.ip]: output[message.ip]
           ? [...output[message.ip], message]
           : [message],
       };
-      output = o;
+    } else if (message.type === messageTypes.done) {
+      parsed.push({
+        input: lastInput,
+        output,
+        inProgress: false,
+        id: `${lastInput.id}-command`,
+      });
+      output = {};
     }
   }
 
   if (messages[messages.length - 1].type === messageTypes.input) {
-    parsed.push({ input: lastInput });
-  } else {
+    parsed.push({
+      input: lastInput,
+      inProgress: true,
+      id: `${lastInput.id}-command`,
+    });
+  } else if (messages[messages.length - 1].type === messageTypes.output) {
     parsed.push({
       input: lastInput,
       output,
+      inProgress: true,
+      id: `${lastInput.id}-command`,
     });
   }
 
@@ -228,18 +260,19 @@ function ClusterTerminalPage() {
           className="coding inverse-toggle px-5 pt-4 shadow-lg text-gray-100 text-sm font-mono subpixel-antialiased 
               bg-gray-800 pb-6 rounded-lg leading-normal h-full overflow-y-auto"
         >
-          {parsedMessages?.map(({ input, output }) => (
-            <div key={`${input.id}-container`}>
-              <div className="mt-4 flex" key={input.id}>
+          {parsedMessages?.map(({ input, output, id, inProgress }) => (
+            <div key={id}>
+              {inProgress && <Spinner />}
+              <div className="mt-4 flex" key={`${id}-input`}>
                 <span className="text-green-400">$</span>
                 <p className="flex-1 typing items-center pl-2">
                   {input.message}
                 </p>
               </div>
-              <div className="flex" key={input.id + "out"}>
+              <div className="flex" key={`${id}-output`}>
                 {output &&
                   Object.keys(output).flatMap((ip) => (
-                    <div className="flex-col mr-8" key={ip}>
+                    <div className="flex-col mr-8" key={`${id}-${ip}`}>
                       {output[ip]?.map((message) => (
                         <div
                           className="flex-col typing items-center pl-2"
@@ -256,19 +289,6 @@ function ClusterTerminalPage() {
               </div>
             </div>
           ))}
-          {/* {messages.map(({ message, type, ip, id }) =>
-            type === messageTypes.output ? (
-              <div className="flex-1 typing items-center pl-2" key={id}>
-                <span className={`text-${getIpColor(ip)}-400 `}>{ip} </span>
-                <em>{message}</em>
-              </div>
-            ) : (
-              <div className="mt-4 flex" key={id}>
-                <span className="text-green-400">$</span>
-                <p className="flex-1 typing items-center pl-2">{message}</p>
-              </div>
-            )
-          )} */}
           <div>
             <form
               onSubmit={(e) => {
