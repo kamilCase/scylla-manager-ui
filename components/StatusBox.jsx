@@ -14,15 +14,19 @@ export const StatusContainer = styled.div`
   width: 85vw;
   flex-wrap: wrap;
 `;
-const statusToColor = {
-  [statusType.positive]: "green-500",
-  [statusType.negative]: "red-500",
-  [statusType.neutral]: "gray-500",
+const statusToBgColor = {
+  [statusType.positive]: "bg-green-500",
+  [statusType.negative]: "bg-red-500",
+  [statusType.neutral]: "",
+};
+
+const statusToTextColor = {
+  [statusType.positive]: "text-green-500",
+  [statusType.negative]: "text-red-500",
+  [statusType.neutral]: "text-gray-500",
 };
 
 function StatusBox({ title, icon, status, description, value, unit }) {
-  const statusColor = statusToColor[status];
-
   return (
     <div className="bg-white overflow-hidden shadow rounded-lg w-24 md:w-32 relative m-2">
       {icon && (
@@ -36,15 +40,17 @@ function StatusBox({ title, icon, status, description, value, unit }) {
             {title.toUpperCase()}
             <span className="ml-2 h-3 w-3 inline-flex">
               <span
-                className={`bg-${statusColor} opacity-75 animate-ping absolute inline-flex h-3 w-3 rounded-full`}
+                className={`${statusToBgColor[status]} opacity-75 animate-ping absolute inline-flex h-3 w-3 rounded-full`}
               ></span>
               <span
-                className={`bg-${statusColor} relative inline-flex rounded-full h-3 w-3`}
+                className={`${statusToBgColor[status]} relative inline-flex rounded-full h-3 w-3`}
               ></span>
             </span>
           </span>
         </p>
-        <div className={`text-lg leading-8 font-semibold text-${statusColor}`}>
+        <div
+          className={`text-lg leading-8 font-semibold ${statusToTextColor[status]}`}
+        >
           {description}
           {value && unit && (
             <span className="text-gray-500 font-semibold text-xs pl-1">
