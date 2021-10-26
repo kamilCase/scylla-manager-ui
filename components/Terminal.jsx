@@ -79,8 +79,8 @@ function useTerminal(clusterId, host) {
         ws.onmessage = (e) => {
           const message = e.data;
           if (message?.includes("___SM_COMMAND_DONE")) {
-            return setMessages([
-              ...messages,
+            return setMessages((oldMessages) => [
+              ...oldMessages,
               {
                 message: message,
                 type: messageTypes.done,
@@ -89,8 +89,8 @@ function useTerminal(clusterId, host) {
             ]);
           }
           const ipSeparator = message.indexOf("|");
-          return setMessages([
-            ...messages,
+          return setMessages((oldMessages) => [
+            ...oldMessages,
             {
               message: message.slice(ipSeparator + 2), // "separator and space"
               ip: message.slice(0, ipSeparator),
